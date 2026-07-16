@@ -563,6 +563,54 @@
         
         // 初始化
         renderDomains();
+        
+        // ============================================
+        // 从 UptimeRobot API 获取真实监控数据
+        // 使用 Monitor-Specific API Key: m803520589-2c3b4d1483276c066898cf89
+        // ============================================
+        async function fetchUptimeData() {
+            const API_KEY = 'm803520589-2c3b4d1483276c066898cf89';
+            const MONITOR_ID = '803520589';
+            
+            try {
+                const response = await fetch('https://api.uptimerobot.com/v2/getMonitors', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `api_key=${encodeURIComponent(API_KEY)}&monitors=${MONITOR_ID}&format=json&response_times=1&custom_uptime_ratios=1-7-30-365&logs=0`
+                });
+                
+                if (!response.ok) throw new Error('API response not ok');
+                
+                const data = await response.json();
+                
+                if (data.stat === 'ok' && data.monitors && data.monitors.length > 0) {
+                    const monitor = data.monitors[0];
+                    
+                    // 更新在线时长（优先显示 30 天在线率，没有则显示全部时间）
+                    const uptime30 = monitor.custom_uptime_ratio;
+                    const uptimeAll = monitor.all_time_uptime_ratio;
+                    const uptimeValue = uptime30 || uptimeAll || '99.9';
+                    const uptimeEl = document.getElementById('uptime');
+                    if (uptimeEl) uptimeEl.textContent = parseFloat(uptimeValue).toFixed(2) + '%';
+                    
+                    // 更新响应时间（平均响应时间）
+                    const avgResponse = monitor.average_response_time;
+                    const responseEl = document.getElementById('response-time');
+                    if (responseEl && avgResponse) {
+                        responseEl.textContent = Math.round(avgResponse) + 'ms';
+                    }
+                    
+                    console.log('UptimeRobot data loaded:', monitor.status);
+                } else {
+                    console.warn('UptimeRobot API returned no data:', data);
+                }
+            } catch (err) {
+                console.error('Failed to fetch UptimeRobot data:', err);
+                // 保留默认值，静默失败
+            }
+        }
+        
+        fetchUptimeData();
     </script>
 </body>
 </html>
