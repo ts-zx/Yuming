@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>域名占位页 | Domain Portfolio</title>
+    <meta name="description" content="Domain placeholder page with uptime monitoring and analytics">
+    
+    <!-- Umami Analytics - 已配置 -->
+    <script async defer data-website-id="f469bbe5-6dc7-469a-a527-e4b5dbaef541" src="https://cloud.umami.is/script.js"></script>
+    
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a2e;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0b0;
+            --accent: #6366f1;
+            --accent-hover: #818cf8;
+            --border: #2a2a3e;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+        
+        [data-theme="light"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #f1f5f9;
+            --bg-card: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --border: #e2e8f0;
+            --success: #16a34a;
+            --warning: #d97706;
+            --error: #dc2626;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .bg-animation {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            opacity: 0.03;
+            background: 
+                radial-gradient(circle at 20% 50%, var(--accent) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, var(--accent) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, var(--success) 0%, transparent 50%);
+            animation: bgPulse 15s ease-in-out infinite;
+        }
+        
+        @keyframes bgPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        header {
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        [data-theme="light"] header {
+            background: rgba(248, 250, 252, 0.8);
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .theme-toggle {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+        
+        .theme-toggle:hover { border-color: var(--accent); }
+        .theme-toggle svg { width: 20px; height: 20px; fill: var(--text-secondary); }
+        
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+        
+        .hero {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+        
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .badge .dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .domains-section { margin-bottom: 4rem; }
+        
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .domains-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .domain-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .domain-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+        
+        .domain-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow);
+            border-color: var(--accent);
+        }
+        
+        .domain-card:hover::before { transform: scaleX(1); }
+        
+        .domain-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+        }
+        
+        .domain-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+        
+        .status-indicator {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+        }
+        
+        .domain-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .domain-actions {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .btn-primary:hover { background: var(--accent-hover); }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        
+        .monitor-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 4rem;
+        }
+        
+        .monitor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .monitor-card {
+            padding: 1.5rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .monitor-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 0.5rem 0;
+        }
+        
+        .monitor-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .uptime-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .uptime-badge img { height: 20px; }
+        
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .social-links a {
+            color: var(--text-secondary);
+            transition: color 0.3s;
+        }
+        
+        .social-links a:hover { color: var(--accent); }
+        
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .domains-grid { grid-template-columns: 1fr; }
+            .monitor-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <header>
+        <div class="logo">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+            </svg>
+            Domain Portfolio
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换主题">
+            <svg class="sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                <circle cx="12" cy="12" r="5"/>
+                <line x1="12" y1="1" x2="12" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/>
+                <line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+            <svg class="moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+            </svg>
+        </button>
+    </header>
+    
+    <main>
+        <section class="hero">
+            <h1>域名资产组合</h1>
+            <p>这里展示了我的所有域名资产，部分域名正在出售或等待开发。如有合作意向，欢迎联系。</p>
+            <div class="badge">
+                <span class="dot"></span>
+                所有系统运行正常
+            </div>
+        </section>
+        
+        <!-- 监控状态区域 - 已集成 UptimeRobot -->
+        <section class="monitor-section">
+            <h2 class="section-title">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                </svg>
+                系统监控
+            </h2>
+            <div class="monitor-grid">
+                <div class="monitor-card">
+                    <div class="monitor-label">在线时长</div>
+                    <div class="monitor-value" id="uptime">99.9%</div>
+                    <div class="uptime-badge">
+                        <!-- UptimeRobot 徽章 - 已配置 Monitor ID: 803520589 -->
+                        <a href="https://dashboard.uptimerobot.com" target="_blank" rel="noopener noreferrer">
+                            <img src="https://img.shields.io/uptimerobot/ratio/803520589?label=Uptime&style=flat-square&color=6366f1" alt="Uptime">
+                        </a>
+                    </div>
+                </div>
+                <div class="monitor-card">
+                    <div class="monitor-label">响应时间</div>
+                    <div class="monitor-value" id="response-time">&lt; 100ms</div>
+                    <div class="monitor-label">平均延迟</div>
+                </div>
+                <div class="monitor-card">
+                    <div class="monitor-label">监控节点</div>
+                    <div class="monitor-value" id="monitors">5</div>
+                    <div class="monitor-label">全球位置</div>
+                </div>
+            </div>
+            <div style="margin-top: 1.5rem; text-align: center;">
+                <p style="color: var(--text-secondary); font-size: 0.875rem;">
+                    由 UptimeRobot 提供监控服务
+                    <a href="https://dashboard.uptimerobot.com" target="_blank" style="color: var(--accent);">查看详情 →</a>
+                </p>
+            </div>
+        </section>
+        
+        <!-- 域名列表 - 请替换为你的实际域名 -->
+        <section class="domains-section">
+            <h2 class="section-title">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                    <line x1="8" y1="21" x2="16" y2="21"/>
+                    <line x1="12" y1="17" x2="12" y2="21"/>
+                </svg>
+                域名列表
+            </h2>
+            <div class="domains-grid" id="domains-grid">
+                <!-- 域名卡片将通过 JS 动态生成 -->
+            </div>
+        </section>
+    </main>
+    
+    <!-- 页脚 - 请替换为你的实际联系方式 -->
+    <footer>
+        <div class="social-links">
+            <a href="mailto:YOUR_EMAIL@example.com" aria-label="Email">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                </svg>
+            </a>
+            <a href="https://github.com/YOUR_USERNAME" target="_blank" aria-label="GitHub">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                </svg>
+            </a>
+            <a href="https://twitter.com/YOUR_USERNAME" target="_blank" aria-label="Twitter">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                </svg>
+            </a>
+        </div>
+        <p>© <span id="year"></span> Domain Portfolio. All rights reserved.</p>
+        <p style="margin-top: 0.5rem; font-size: 0.875rem;">
+            由 Umami 提供隐私友好的访问统计
+        </p>
+    </footer>
+    
+    <script>
+        // 域名配置 - 请在这里添加你的所有域名
+        const domains = [
+            {
+                name: "example.com",
+                status: "活跃",
+                description: "主要项目域名",
+                expiry: "2025-12-31",
+                forSale: false,
+                url: "https://example.com"
+            },
+            {
+                name: "example.io",
+                status: "开发中",
+                description: "技术博客",
+                expiry: "2025-06-30",
+                forSale: false,
+                url: "https://example.io"
+            },
+            {
+                name: "example.app",
+                status: "待售",
+                description: "应用项目域名",
+                expiry: "2025-09-15",
+                forSale: true,
+                price: "$1,500",
+                url: "mailto:YOUR_EMAIL@example.com?subject=域名购买咨询：example.app"
+            },
+            {
+                name: "example.dev",
+                status: "占位",
+                description: "开发环境",
+                expiry: "2025-03-20",
+                forSale: true,
+                price: "$800",
+                url: "mailto:YOUR_EMAIL@example.com?subject=域名购买咨询：example.dev"
+            }
+        ];
+        
+        // 渲染域名卡片
+        function renderDomains() {
+            const grid = document.getElementById('domains-grid');
+            grid.innerHTML = domains.map(domain => `
+                <div class="domain-card">
+                    <div class="domain-name">${domain.name}</div>
+                    <div class="domain-status">
+                        <span class="status-indicator" style="background: ${getStatusColor(domain.status)}"></span>
+                        ${domain.status}
+                        ${domain.forSale ? '<span style="color: var(--warning); margin-left: 0.5rem;">● 出售中</span>' : ''}
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1rem;">
+                        ${domain.description}
+                    </p>
+                    <div class="domain-meta">
+                        <span>到期: ${domain.expiry}</span>
+                        ${domain.price ? `<span style="color: var(--accent);">${domain.price}</span>` : ''}
+                    </div>
+                    <div class="domain-actions">
+                        <a href="${domain.url}" class="btn btn-primary" ${domain.url.startsWith('http') ? 'target="_blank" rel="noopener noreferrer"' : ''}>
+                            ${domain.forSale ? '联系购买' : '访问网站'}
+                        </a>
+                        ${domain.forSale ? `<button class="btn btn-secondary" onclick="copyDomain('${domain.name}')">复制域名</button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function getStatusColor(status) {
+            const colors = {
+                '活跃': 'var(--success)',
+                '开发中': 'var(--accent)',
+                '待售': 'var(--warning)',
+                '占位': 'var(--text-secondary)'
+            };
+            return colors[status] || 'var(--text-secondary)';
+        }
+        
+        function copyDomain(domain) {
+            navigator.clipboard.writeText(domain).then(() => {
+                alert(`已复制: ${domain}`);
+            });
+        }
+        
+        // 主题切换
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            
+            document.querySelector('.sun').style.display = next === 'light' ? 'block' : 'none';
+            document.querySelector('.moon').style.display = next === 'dark' ? 'block' : 'none';
+        }
+        
+        // 加载保存的主题
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        document.querySelector('.sun').style.display = savedTheme === 'light' ? 'block' : 'none';
+        document.querySelector('.moon').style.display = savedTheme === 'dark' ? 'block' : 'none';
+        
+        // 设置年份
+        document.getElementById('year').textContent = new Date().getFullYear();
+        
+        // 初始化
+        renderDomains();
+    </script>
+</body>
+</html>
