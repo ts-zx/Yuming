@@ -306,9 +306,21 @@
             align-items: center;
             gap: 0.5rem;
             margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .uptime-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            background: var(--bg-secondary);
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 500;
         }
         
-        .uptime-badge img { height: 20px; }
+        .uptime-badge img { height: 20px; max-width: 100%; }
         
         footer {
             border-top: 1px solid var(--border);
@@ -389,11 +401,8 @@
                 <div class="monitor-card">
                     <div class="monitor-label">在线时长</div>
                     <div class="monitor-value" id="uptime">99.9%</div>
-                    <div class="uptime-badge">
-                        <!-- UptimeRobot 徽章 - 已配置 Monitor ID: 803520589 -->
-                        <a href="https://dashboard.uptimerobot.com" target="_blank" rel="noopener noreferrer">
-                            <img src="https://img.shields.io/uptimerobot/ratio/803520589?label=Uptime&style=flat-square&color=6366f1" alt="Uptime">
-                        </a>
+                    <div class="uptime-badge" id="uptime-badge">
+                        <span class="uptime-status" id="uptime-status">● 加载中…</span>
                     </div>
                 </div>
                 <div class="monitor-card">
@@ -632,6 +641,14 @@
                     const responseEl = document.getElementById('response-time');
                     if (responseEl && avgResponse) {
                         responseEl.textContent = Math.round(avgResponse) + 'ms';
+                    }
+                    
+                    // 更新在线状态标签（替代 shields.io 徽章）
+                    const statusEl = document.getElementById('uptime-status');
+                    if (statusEl) {
+                        const isUp = monitor.status === 2;
+                        statusEl.textContent = isUp ? '● 在线' : '● 离线';
+                        statusEl.style.color = isUp ? 'var(--success)' : 'var(--error)';
                     }
                     
                     console.log('UptimeRobot data loaded:', monitor.status);
